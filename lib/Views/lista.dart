@@ -1,13 +1,14 @@
+import 'package:busrefactori/services/ApiService.dart';
 import 'package:flutter/material.dart';
-import 'package:busrefactori/NavDrawer.dart';
+import 'package:busrefactori/Views/principal.dart';
 
-class reporte extends StatelessWidget {
+class lista extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'FORMULARIO',
       theme: ThemeData(
         primarySwatch: Colors.yellow,
       ),
@@ -24,14 +25,18 @@ class formulario extends StatefulWidget {
 }
 
 String dropDownValue = "Hombre";
-var sexo = [
-  'Hombre',
-  'Mujer',
-];
 
 int _value = 0;
 
 class _formularioState extends State<formulario> {
+  final piloto = TextEditingController();
+  final placabus = TextEditingController();
+  final gas_antes = TextEditingController();
+  final gas_despues = TextEditingController();
+  final estado = TextEditingController();
+  final salon = TextEditingController();
+  final observacion = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,11 +50,12 @@ class _formularioState extends State<formulario> {
               },
               icon: Icon(Icons.reply))
         ],
-        title: Text("FORMULARIO DE FALLAS Y VARADAS"),
+        title: Text("Mi Formulario"),
       ),
       body: Center(
         child: Column(children: [
           TextFormField(
+            controller: piloto,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Nombre del piloto',
@@ -61,9 +67,10 @@ class _formularioState extends State<formulario> {
             ),
           ),
           TextFormField(
+            controller: placabus,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Placa del bus',
+              labelText: 'Numero de Bus ',
             ),
             style: TextStyle(
               fontSize: 15,
@@ -72,9 +79,10 @@ class _formularioState extends State<formulario> {
             ),
           ),
           TextFormField(
+            controller: gas_antes,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Ubicacion del evento',
+              labelText: 'Presión de Gas (Antes)',
             ),
             style: TextStyle(
               fontSize: 15,
@@ -83,9 +91,10 @@ class _formularioState extends State<formulario> {
             ),
           ),
           TextFormField(
+            controller: gas_despues,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Hora',
+              labelText: 'Presion de Gas (Despues)',
             ),
             style: TextStyle(
               fontSize: 15,
@@ -94,9 +103,10 @@ class _formularioState extends State<formulario> {
             ),
           ),
           TextFormField(
+            controller: estado,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Sistema',
+              labelText: 'Estado de carroceria exterior',
             ),
             style: TextStyle(
               fontSize: 15,
@@ -105,9 +115,10 @@ class _formularioState extends State<formulario> {
             ),
           ),
           TextFormField(
+            controller: salon,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Velocidad que presento la falla',
+              labelText: 'Salon (Interior)',
             ),
             style: TextStyle(
               fontSize: 15,
@@ -117,9 +128,10 @@ class _formularioState extends State<formulario> {
           ),
           TextFormField(
             maxLines: 8,
+            controller: observacion,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Ingrese el detalle de la novedad',
+              labelText: 'Observacion',
             ),
             style: TextStyle(
               fontSize: 15,
@@ -128,13 +140,40 @@ class _formularioState extends State<formulario> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 19, horizontal: 150),
-            child: RaisedButton(
-              onPressed: () {},
+            child: ElevatedButton(
+              onPressed: send,
               child: Text('ENVIAR'),
             ),
           ),
         ]),
       ),
     );
+  }
+
+  Future<void> send() async {
+    ApiService apiService = ApiService();
+    Map<String, dynamic> dato = {
+      "procedure": "{ CALL busrefactori.SP_BUSREFACTORI_GUARDAR_CHECK(?,?,?,?,?,?,?) }",
+      "params" : [piloto.text,placabus.text,gas_antes.text,gas_despues.text,estado.text,salon.text,observacion.text]
+    };
+
+    dynamic res = await apiService.guardarCheck(dato);
+    if (res != null) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text('CHEQUEO'),
+                content: const Text('CHEQUEO ENVIADO'),
+                actions: <Widget>[
+                  ElevatedButton(
+                    child: const Text('Aceptar'),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MyAppi()));
+                    },
+                  )
+                ],
+              ));
+    }
   }
 }
