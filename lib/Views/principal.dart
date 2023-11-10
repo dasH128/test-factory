@@ -1,3 +1,6 @@
+import 'package:busrefactori/Views/novedad.dart';
+import 'package:busrefactori/widgets/content_default_menu.dart';
+import 'package:busrefactori/widgets/logo_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:busrefactori/Views/lista.dart';
 import 'package:busrefactori/Views/reporte.dart';
@@ -55,7 +58,7 @@ class MyAppi extends StatelessWidget {
                     right: 20,
                   ),
                 ),
-                _Logo(context),
+                const LogoWidget(),
                 Container(
                   child: Center(
                     child: Text(
@@ -129,20 +132,22 @@ class MyAppi extends StatelessWidget {
 class MenuLateral extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Drawer(
+    return Drawer(
       child: ListView(
         children: <Widget>[
-          new UserAccountsDrawerHeader(
+          const UserAccountsDrawerHeader(
             accountName: Text(" "),
             accountEmail: Text(" "),
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: NetworkImage(
-                        "https://www.limabus.com.pe/wp-content/uploads/2021/09/LIMA-BUS-INTERNACIONAL-1.jpg"),
+                    // image: NetworkImage(
+                    //   "https://www.limabus.com.pe/wp-content/uploads/2021/09/LIMA-BUS-INTERNACIONAL-1.jpg",
+                    // ),
+                    image: AssetImage('images/logo.png'),
                     fit: BoxFit.cover)),
           ),
-          new ListTile(
-            title: Text(
+          ListTile(
+            title: const Text(
               "RECOMENDACIONES DE SEGURIDAD ",
             ),
             onTap: () {
@@ -151,7 +156,7 @@ class MenuLateral extends StatelessWidget {
                   builder: (BuildContext context) => Empresa()));
             },
           ),
-          new ListTile(
+          ListTile(
             title: Text("REPORTES DE FALLAS Y VARADAS"),
             onTap: () {
               Navigator.of(context).pop();
@@ -159,12 +164,20 @@ class MenuLateral extends StatelessWidget {
                   builder: (BuildContext context) => reporte()));
             },
           ),
-          new ListTile(
+           ListTile(
             title: Text("LISTA DE CHEQUEO"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => lista()));
+            },
+          ),
+          ListTile(
+            title: const Text("REPORTE NOVEDAD"),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => NovedadScreen()));
             },
           )
         ],
@@ -180,26 +193,7 @@ class Empresa extends StatelessWidget {
         appBar: AppBar(
           title: new Text("RECOMENDACIONES DEL PILOTO"),
         ),
-        body: Center(
-          child: Stack(alignment: Alignment.bottomCenter, children: [
-            Image.asset(
-              'images/piloto.jpg',
-              width: 450,
-              height: 450,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Text(
-                "ESTIMADO PILOTO REPORTA TODA NOVEDAD O FALLA QUE PRESENTA EL BUS, CON TU APOYO "
-                "AYUDARAS EVITAR UNA VARADA, ESTO CON EL FIN DE DAR UN BUEN SERVICIO A NUESTROS USUARIOS.",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15),
-              ),
-            ),
-          ]),
-        ));
+        body: ContentDefaultMenuWidget());
   }
 }
 

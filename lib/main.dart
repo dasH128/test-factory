@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:busrefactori/Views/principal.dart';
+import 'package:busrefactori/Views/principal_admin_screen.dart';
 import 'package:busrefactori/services/ApiService.dart';
 import 'package:flutter/material.dart';
 
@@ -17,9 +18,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: _title,
       theme: ThemeData(primarySwatch: Colors.amber),
-      home: Scaffold(
-        body: const MyStatefulWidget(),
-      ),
+      home: LoginView(),
+    );
+  }
+}
+
+class LoginView extends StatelessWidget {
+  const LoginView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: const MyStatefulWidget(),
     );
   }
 }
@@ -108,10 +118,14 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     ApiService apiService = ApiService();
     dynamic res = await apiService.iniciarSesion(username.text, password.text);
     dynamic values = json.decode(res.toString());
-    print(values['data'][0]["login"]);
+    print('datos: ${username.text} - ${password.text}');
+    print('server response: ${values['data'][0]["login"]}');
     if (values['data'][0]["login"] == 1) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MyAppi()));
+    } else if (values['data'][0]["login"] == 2) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (ctx) => const PrincipalAdminScreen()));
     } else {
       showDialog(
           context: context,
