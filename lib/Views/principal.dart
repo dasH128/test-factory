@@ -1,4 +1,5 @@
 import 'package:busrefactori/Views/novedad.dart';
+import 'package:busrefactori/main.dart';
 import 'package:busrefactori/widgets/content_default_menu.dart';
 import 'package:busrefactori/widgets/logo_widget.dart';
 import 'package:flutter/material.dart';
@@ -157,15 +158,15 @@ class MenuLateral extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text("REPORTES DE FALLAS Y VARADAS"),
+            title: const Text("REPORTES DE FALLAS Y VARADAS"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => reporte()));
             },
           ),
-           ListTile(
-            title: Text("LISTA DE CHEQUEO"),
+          ListTile(
+            title: const Text("LISTA DE CHEQUEO"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(
@@ -173,13 +174,23 @@ class MenuLateral extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text("REPORTE NOVEDAD"),
+            title: const Text("REPORTE DE INSPECCIÓN NOCTURNA"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => NovedadScreen()));
             },
-          )
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text("LOGOUT"),
+            onTap: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (ctx) => const LoginView()));
+              // Navigator.of(context).push(MaterialPageRoute(
+              //     builder: (BuildContext context) => lista()));
+            },
+          ),
         ],
       ),
     );

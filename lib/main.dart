@@ -14,6 +14,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //return MyAppi(); //PrincipalAdminScreen MyAppi
+    // return MaterialApp(
+    //   debugShowCheckedModeBanner: false,
+    //   title: _title,
+    //   theme: ThemeData(primarySwatch: Colors.amber),
+    //   home: PrincipalAdminScreen(),
+    // );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: _title,

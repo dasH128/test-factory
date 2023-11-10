@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:busrefactori/entities/novedad.dart';
 import 'package:busrefactori/entities/report1.dart';
 import 'package:busrefactori/entities/reporte_check.dart';
 import 'package:dio/dio.dart';
@@ -138,7 +139,7 @@ class ApiService {
     }
   }
 
-  Future<Response?> buscarNovedad(String fecha1, String fecha2) async {
+  Future<List<Novedad>> buscarNovedad(String fecha1, String fecha2) async {
     try {
       // "params": ["2023-01-01","2024-01-01"]
       Map<String, dynamic> dato = {
@@ -154,9 +155,18 @@ class ApiService {
               }),
               data: json.encode(dato));
 
-      return response;
+      dynamic values = json.decode(response.toString());
+      List<Novedad> lista = [];
+      values['data'].map((i) {
+        lista.add(Novedad.fromJson(i));
+        return;
+      }).toList();
+
+      print('CHECK******');
+      print(values);
+      return lista;
     } on DioError catch (e) {
-      return null;
+      return [];
     }
   }
 }

@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:busrefactori/services/ApiService.dart';
+import 'package:busrefactori/widgets/input_date_widget.dart';
+import 'package:busrefactori/widgets/select_bus_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:busrefactori/Views/principal.dart';
 
@@ -34,6 +36,7 @@ class _formularioState extends State<formulario> {
   final hora = TextEditingController();
   final sistema = TextEditingController();
   final velocidad = TextEditingController();
+  final controllerDate = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,100 +53,142 @@ class _formularioState extends State<formulario> {
         ],
         title: Text("FORMULARIO DE FALLAS Y VARADAS"),
       ),
-      body: Center(
-        child: Column(children: [
-          TextFormField(
-            controller: piloto,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Nombre del piloto',
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Column(children: [
+            TextFormField(
+              controller: piloto,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Nombre del piloto',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: placabus,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Placa del bus',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
+              readOnly: true,
+              onTap: () async {
+                var data = await showDialog<String?>(
+                  context: context,
+                  builder: (_) {
+                    return const SelectPlacaBusView();
+                  },
+                );
+                if (data == null) return;
+                print('eligio $data');
+                placabus.text = data;
+                setState(() {});
+              },
             ),
-          ),
-          TextFormField(
-            controller: placabus,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Placa del bus',
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: ubicacion,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Ubicacion del evento',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: hora,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Hora',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
-          TextFormField(
-            controller: ubicacion,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Ubicacion del evento',
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: sistema,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Sistema',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: velocidad,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Velocidad que presento la falla',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
-          TextFormField(
-            controller: hora,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Hora',
+            const SizedBox(height: 16),
+            InputDateWidget(
+              padding: 0,
+              suffixIcon: const Icon(Icons.calendar_month),
+              controller: controllerDate,
+              labelText: 'Fecha',
+              // hintText: 'sss',
+              onTap: () async {
+                var date = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000, 1, 1),
+                  lastDate: DateTime.now(),
+                );
+                if (date == null) return;
+
+                controllerDate.text = '${date.year}-${date.month}-${date.day}';
+                setState(() {});
+              },
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: detalle,
+              maxLines: 8,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Ingrese el detalle de la novedad',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Color.fromARGB(255, 243, 33, 33),
+              ),
             ),
-          ),
-          TextFormField(
-            controller: sistema,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Sistema',
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 19, horizontal: 150),
+              child: ElevatedButton(
+                onPressed: send,
+                child: Text('ENVIAR'),
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          TextFormField(
-            controller: velocidad,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Velocidad que presento la falla',
-            ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          TextFormField(
-            controller: detalle,
-            maxLines: 8,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Ingrese el detalle de la novedad',
-            ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Color.fromARGB(255, 243, 33, 33),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 19, horizontal: 150),
-            child: ElevatedButton(
-              onPressed: send,
-              child: Text('ENVIAR'),
-            ),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
@@ -151,8 +196,18 @@ class _formularioState extends State<formulario> {
   Future<void> send() async {
     ApiService apiService = ApiService();
     Map<String, dynamic> dato = {
-      "procedure": "{ CALL busrefactori.SP_BUSREFACTORI_GUARDAR_REPORTE(?,?,?,?,?,?,?) }",
-      "params": [piloto.text,placabus.text,detalle.text,ubicacion.text,hora.text,sistema.text,velocidad.text],
+      "procedure":
+          "{ CALL busrefactori.SP_BUSREFACTORI_GUARDAR_REPORTE(?,?,?,?,?,?,?,?) }",
+      "params": [
+        piloto.text,
+        placabus.text,
+        detalle.text,
+        ubicacion.text,
+        hora.text,
+        sistema.text,
+        velocidad.text,
+        controllerDate.text
+      ],
     };
 
     dynamic res = await apiService.guardarReporte(dato);

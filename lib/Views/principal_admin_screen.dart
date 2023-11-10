@@ -58,17 +58,9 @@ class DrawerAdminView extends StatelessWidget {
                       const BuscarReporteScreen()));
             },
           ),
-          // ListTile(
-          //   title: const Text("3"),
-          //   onTap: () {
-          //     Navigator.of(context).pop();
-          //     // Navigator.of(context).push(MaterialPageRoute(
-          //     //     builder: (BuildContext context) => lista()));
-          //   },
-          // ),
-          Divider(),
+          const Divider(),
           ListTile(
-            title: const Text("logout"),
+            title: const Text("LOGOUT"),
             onTap: () {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (ctx) => const LoginView()));

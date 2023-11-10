@@ -6,6 +6,7 @@ class InputDateWidget extends StatelessWidget {
   final String? labelText;
   final String? hintText;
   final Widget? suffixIcon;
+  final double? padding;
   // placabus = TextEditingController();
   const InputDateWidget({
     super.key,
@@ -14,12 +15,13 @@ class InputDateWidget extends StatelessWidget {
     this.labelText,
     this.hintText,
     this.suffixIcon,
+    this.padding = 8.0,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all((padding == null) ? 8.0 : padding!),
       child: TextFormField(
         controller: controller,
         readOnly: true,

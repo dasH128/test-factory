@@ -1,4 +1,6 @@
 import 'package:busrefactori/services/ApiService.dart';
+import 'package:busrefactori/widgets/input_date_widget.dart';
+import 'package:busrefactori/widgets/select_bus_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:busrefactori/Views/principal.dart';
 
@@ -36,7 +38,7 @@ class _formularioState extends State<formulario> {
   final estado = TextEditingController();
   final salon = TextEditingController();
   final observacion = TextEditingController();
-
+  final controllerDate = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,100 +54,142 @@ class _formularioState extends State<formulario> {
         ],
         title: Text("Mi Formulario"),
       ),
-      body: Center(
-        child: Column(children: [
-          TextFormField(
-            controller: piloto,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Nombre del piloto',
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Column(children: [
+            TextFormField(
+              controller: piloto,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Nombre del piloto',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: placabus,
+              readOnly: true,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Numero de Bus ',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
+              onTap: () async {
+                var data = await showDialog<String?>(
+                  context: context,
+                  builder: (_) {
+                    return const SelectPlacaBusView();
+                  },
+                );
+                if (data == null) return;
+                print('eligio $data');
+                placabus.text = data;
+                setState(() {});
+              },
             ),
-          ),
-          TextFormField(
-            controller: placabus,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Numero de Bus ',
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: gas_antes,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Presión de Gas (Antes)',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: gas_despues,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Presion de Gas (Despues)',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
-          TextFormField(
-            controller: gas_antes,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Presión de Gas (Antes)',
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: estado,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Estado de carroceria exterior',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: salon,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Salon (Interior)',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
-          TextFormField(
-            controller: gas_despues,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Presion de Gas (Despues)',
+            const SizedBox(height: 16),
+            InputDateWidget(
+              padding: 0,
+              suffixIcon: const Icon(Icons.calendar_month),
+              controller: controllerDate,
+              labelText: 'Fecha',
+              // hintText: 'sss',
+              onTap: () async {
+                var date = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000, 1, 1),
+                  lastDate: DateTime.now(),
+                );
+                if (date == null) return;
+
+                controllerDate.text = '${date.year}-${date.month}-${date.day}';
+                setState(() {});
+              },
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 16),
+            TextFormField(
+              maxLines: 8,
+              controller: observacion,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Observacion',
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: Color.fromARGB(255, 243, 33, 33),
+              ),
             ),
-          ),
-          TextFormField(
-            controller: estado,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Estado de carroceria exterior',
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 19, horizontal: 150),
+              child: ElevatedButton(
+                onPressed: send,
+                child: Text('ENVIAR'),
+              ),
             ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          TextFormField(
-            controller: salon,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Salon (Interior)',
-            ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.blue,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          TextFormField(
-            maxLines: 8,
-            controller: observacion,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Observacion',
-            ),
-            style: TextStyle(
-              fontSize: 15,
-              color: Color.fromARGB(255, 243, 33, 33),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 19, horizontal: 150),
-            child: ElevatedButton(
-              onPressed: send,
-              child: Text('ENVIAR'),
-            ),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
@@ -153,8 +197,18 @@ class _formularioState extends State<formulario> {
   Future<void> send() async {
     ApiService apiService = ApiService();
     Map<String, dynamic> dato = {
-      "procedure": "{ CALL busrefactori.SP_BUSREFACTORI_GUARDAR_CHECK(?,?,?,?,?,?,?) }",
-      "params" : [piloto.text,placabus.text,gas_antes.text,gas_despues.text,estado.text,salon.text,observacion.text]
+      "procedure":
+          "{ CALL busrefactori.SP_BUSREFACTORI_GUARDAR_CHECK(?,?,?,?,?,?,?, ?) }",
+      "params": [
+        piloto.text,
+        placabus.text,
+        gas_antes.text,
+        gas_despues.text,
+        estado.text,
+        salon.text,
+        observacion.text,
+        controllerDate.text
+      ]
     };
 
     dynamic res = await apiService.guardarCheck(dato);

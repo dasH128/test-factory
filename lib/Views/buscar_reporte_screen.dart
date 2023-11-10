@@ -57,10 +57,6 @@ class _BuscarReporteScreenState extends State<BuscarReporteScreen> {
                           // width: 15,
                           // height: 250,
                         ),
-                        const Text(
-                          'LIMA BUS',
-                          style: TextStyle(fontSize: 20),
-                        ),
                       ],
                     ),
                   ),
@@ -125,8 +121,12 @@ class _BuscarReporteScreenState extends State<BuscarReporteScreen> {
                 onTap: () async {
                   var data = await showDialog<String?>(
                     context: context,
-                    builder: (_) => SelectTipoInformeView(
-                      items: ['reporte1', 'reporte2', 'reporte3'],
+                    builder: (_) => const SelectTipoInformeView(
+                      items: [
+                        'Novedad en via',
+                        'Lista de chequeo',
+                        'Inspección nocturna'
+                      ],
                     ),
                   );
                   if (data == null) return;
@@ -141,6 +141,18 @@ class _BuscarReporteScreenState extends State<BuscarReporteScreen> {
                     const EdgeInsets.symmetric(horizontal: 80.0, vertical: 5.0),
                 child: ElevatedButton(
                   onPressed: () async {
+                    if (dateInit == null ||
+                        dateEnd == null ||
+                        controllerTipo.text == '') {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text(
+                          'Ingrese todos los campos',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                      ));
+                      return;
+                    }
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) =>
                           BuscarResultadoReporteScreen(
@@ -158,12 +170,6 @@ class _BuscarReporteScreenState extends State<BuscarReporteScreen> {
                 )),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await downloadPDF();
-        },
-        child: const Icon(Icons.picture_as_pdf),
       ),
     );
   }

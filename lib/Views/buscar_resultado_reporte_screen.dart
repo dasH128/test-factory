@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:busrefactori/Views/pdf_check_screen.dart';
+import 'package:busrefactori/Views/pdf_novedad_screen.dart';
+import 'package:busrefactori/Views/pdf_reporte_screen.dart';
+import 'package:busrefactori/entities/novedad.dart';
 import 'package:busrefactori/entities/report1.dart';
 import 'package:busrefactori/entities/reporte_check.dart';
 import 'package:busrefactori/services/ApiService.dart';
@@ -30,7 +34,7 @@ class _BuscarResultadoReporteScreenState
   bool isLoading = true;
   List<Reporte1> listaReporte1 = [];
   List<ReporteCheck> listaReporte2 = [];
-  List<Reporte1> listaReporte3 = [];
+  List<Novedad> listaReporte3 = [];
   @override
   void initState() {
     super.initState();
@@ -40,15 +44,15 @@ class _BuscarResultadoReporteScreenState
   loadData() async {
     ApiService apiService = ApiService();
     print('${widget.fecha1} - ${widget.fecha2}');
-    if (widget.informeTipo == 'reporte1') {
+    if (widget.informeTipo == 'Novedad en via') {
       listaReporte1 =
           await apiService.buscarReporte(widget.fecha1, widget.fecha2);
-    } else if (widget.informeTipo == 'reporte2') {
+    } else if (widget.informeTipo == 'Lista de chequeo') {
       listaReporte2 =
           await apiService.buscarCheck(widget.fecha1, widget.fecha2);
-    } else if (widget.informeTipo == 'reporte3') {
-      var x = await apiService.buscarNovedad(widget.fecha1, widget.fecha2);
-      print(x);
+    } else if (widget.informeTipo == 'Inspección nocturna') {
+      listaReporte3 =
+          await apiService.buscarNovedad(widget.fecha1, widget.fecha2);
     } else {}
     //await Future.delayed(Duration(seconds: 3));
     print('*******');
@@ -74,16 +78,16 @@ class _BuscarResultadoReporteScreenState
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '${widget.fecha1} - ${widget.fecha2}',
+                    '${widget.fecha1} hasta ${widget.fecha2}',
                     style: const TextStyle(fontSize: 25),
                   ),
                   const SizedBox(height: 16),
-                  if (widget.informeTipo == 'reporte1')
+                  if (widget.informeTipo == 'Novedad en via')
                     _ListaReporte1Container(reporte: listaReporte1),
-                  if (widget.informeTipo == 'reporte2')
+                  if (widget.informeTipo == 'Lista de chequeo')
                     _ListaReporteCheckContainer(reporte: listaReporte2),
-                  if (widget.informeTipo == 'reporte3')
-                    _ListaReporte1Container(reporte: listaReporte1)
+                  if (widget.informeTipo == 'Inspección nocturna')
+                    _ListaReporteNovedadContainer(reporte: listaReporte3)
                 ],
               ),
             ),
@@ -101,24 +105,36 @@ class _ListaReporte1Container extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme color = Theme.of(context).colorScheme;
+
+    if (reporte.isEmpty) {
+      return const _EmptyListContainer();
+    }
     return Expanded(
       child: ListView.builder(
         itemCount: reporte.length,
         itemBuilder: (_, index) {
           var item = reporte[index];
-          return ListTile(
-            trailing: GestureDetector(
-                onTap: () async {
-                  await donwload();
-                },
-                child: const Icon(Icons.picture_as_pdf)),
-            tileColor: color.surfaceVariant,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: color.primary, width: 1.5),
+          return Container(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: ListTile(
+              trailing: GestureDetector(
+                  onTap: () async {
+                    // await donwload();
+                    print('ir al pdf');
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          PdfReporteScreen(reporte: item),
+                    ));
+                  },
+                  child: const Icon(Icons.picture_as_pdf)),
+              tileColor: color.surfaceVariant,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: color.primary, width: 1.5),
+              ),
+              title: Text(item.piloto),
+              subtitle: Text(item.fechaRegistro.toString().substring(0, 10)),
             ),
-            title: Text(item.piloto),
-            subtitle: Text(item.fechaRegistro.toString().substring(0, 10)),
           );
         },
       ),
@@ -151,6 +167,10 @@ class _ListaReporteCheckContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme color = Theme.of(context).colorScheme;
+
+    if (reporte.isEmpty) {
+      return const _EmptyListContainer();
+    }
     return Expanded(
       child: ListView.builder(
         itemCount: reporte.length,
@@ -161,7 +181,12 @@ class _ListaReporteCheckContainer extends StatelessWidget {
             child: ListTile(
               trailing: GestureDetector(
                   onTap: () async {
-                    await donwload();
+                    // await donwload();
+                    print('ir al pdf');
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          PdfCheckScreen(reporte: item),
+                    ));
                   },
                   child: const Icon(Icons.picture_as_pdf)),
               tileColor: color.surfaceVariant,
@@ -191,5 +216,83 @@ class _ListaReporteCheckContainer extends StatelessWidget {
           ); // Center
         }));
     var x = await file.writeAsBytes(await pdf.save());
+  }
+}
+
+class _ListaReporteNovedadContainer extends StatelessWidget {
+  const _ListaReporteNovedadContainer({
+    required this.reporte,
+  });
+
+  final List<Novedad> reporte;
+
+  @override
+  Widget build(BuildContext context) {
+    ColorScheme color = Theme.of(context).colorScheme;
+
+    if (reporte.isEmpty) {
+      return const _EmptyListContainer();
+    }
+    return Expanded(
+      child: ListView.builder(
+        itemCount: reporte.length,
+        itemBuilder: (_, index) {
+          var item = reporte[index];
+          return Container(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: ListTile(
+              trailing: GestureDetector(
+                  onTap: () async {
+                    // await donwload();
+                    print('ir al pdf');
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          PdfNovedadScreen(reporte: item),
+                    ));
+                  },
+                  child: const Icon(Icons.picture_as_pdf)),
+              tileColor: color.surfaceVariant,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: color.primary, width: 1.5),
+              ),
+              title: Text(item.piloto ?? '-'),
+              subtitle: Text(item.fechaRegistro.toString().substring(0, 10)),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future donwload() async {
+    //final Directory tempDir = await getTemporaryDirectory();
+    final output = await getTemporaryDirectory();
+    final file = File("${output.path}/example.pdf");
+    final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Text('Hello World', style: pw.TextStyle(fontSize: 40)),
+          ); // Center
+        }));
+    var x = await file.writeAsBytes(await pdf.save());
+  }
+}
+
+class _EmptyListContainer extends StatelessWidget {
+  const _EmptyListContainer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Expanded(
+      child: Center(
+        child: Text(
+          'Sin registros',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 }
